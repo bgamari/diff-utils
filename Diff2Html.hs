@@ -14,11 +14,8 @@ import Diff
 import Style
 import Utils (breakWith)
 
-chunksToHtml :: [Chunk] -> Html ()
-chunksToHtml chunks =
-    doctypehtml_ $ do
-        head_ $ style_ [] styleSheet
-        body_ $ table_ [class_ "diff"]$ foldMap chunkToRows chunks
+chunksToTable :: [Chunk] -> Html ()
+chunksToTable chunks = table_ [class_ "diff"]$ foldMap chunkToRows chunks
 
 chunkToRows :: Chunk -> Html ()
 chunkToRows (Chunk files pos body) = do
