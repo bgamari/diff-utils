@@ -1,15 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE DeriveFunctor #-}
 
 module Diff where
 
 import Data.Monoid
-import Data.Foldable
-import qualified Data.DList as DList
-import qualified Data.Text.Lazy as TL
 import qualified Data.Text as T
-import qualified Data.Text.IO as T
 import qualified Data.Text.Lazy.Builder as TB
 import qualified Data.Text.Lazy.Builder.Int as TB
 import           Data.Attoparsec.Text
@@ -99,10 +94,10 @@ diff = header <|> (Position <$> position) <|> annotation <|> body
             return $ DiffFile file timestamp
 
     position = do
-        string "@@"
+        void $ string "@@"
         rm <- skipSpace *> char '-' *> pos
         add <- skipSpace *> char '+' *> pos
-        rest <- skipSpace *> string "@@" *> takeLine
+        _rest <- skipSpace *> string "@@" *> takeLine
         return $ Diff rm add
       where
         pos = Pos <$> decimal <*> option 1 (char ',' *> decimal)
