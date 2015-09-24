@@ -76,7 +76,7 @@ takeLine :: Parser T.Text
 takeLine = takeTill (=='\n') <* char '\n'
 
 diff :: Parser DiffLine
-diff = header <|> (Position <$> position) <|> body
+diff = header <|> (Position <$> position) <|> annotation <|> body
   where
     header = try $ do
         void $ optional $ do
@@ -106,6 +106,9 @@ diff = header <|> (Position <$> position) <|> body
         return $ Diff rm add
       where
         pos = Pos <$> decimal <*> option 1 (char ',' *> decimal)
+
+    -- e.g. "\ no newline at end of file" as produced by git
+    annotation = char '\\' >> takeLine >> diff
 
     body = Body <$> (context <|> removal <|> addition)
     context  = Context <$> (char ' ' *> takeLine)
