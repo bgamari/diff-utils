@@ -61,7 +61,7 @@ diffLines :: T.Text -> T.Text -> Diff (Html ())
 diffLines a b = foldl' go (Diff mempty mempty) $ groupItems $ P.diff (T.unpack a) (T.unpack b)
   where
     go :: Diff (Html ()) -> P.Item String -> Diff (Html ())
-    go (Diff l r) (P.Both l' r') = Diff (l <> toHtml l') (r <> toHtml r')
+    go (Diff l r) (P.Both l' r') = Diff (l <> span_ [] (toHtml l')) (r <> span_ [] (toHtml r'))
     go (Diff l r) (P.Old l')     = Diff (l <> span_ new (toHtml l')) r
     go (Diff l r) (P.New r')     = Diff l (r <> span_ new (toHtml r'))
     new = [class_ "change"]
