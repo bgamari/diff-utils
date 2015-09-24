@@ -4,15 +4,22 @@
 module Diff2Html where
 
 import Data.Monoid
+import qualified Data.Text as T
 
 import Chunk
 import Diff
 import Lucid
-import qualified Data.Text as T
+import Style
+
+chunksToHtml :: [Chunk] -> Html ()
+chunksToHtml chunks =
+    doctypehtml_ $ do
+        head_ $ style_ [] styleSheet
+        body_ $ table_ [class_ "diff"]$ foldMap chunkToRows chunks
 
 chunkToRows :: Chunk -> Html ()
 chunkToRows (Chunk files pos body) = do
-    tr_ $ mapM_ (cell [] . fileName) files
+    tr_ [class_ "header"] $ mapM_ (td_ . span_ [class_ "filename"] . toHtml . fileName) files
     tr_ $ mapM_ showTd pos
     mapM_ chunkBodyToRows body
   where
@@ -25,11 +32,8 @@ chunkBodyToRows (CContext lines) = mapM_ go lines
     go :: T.Text -> Html ()
     go l = tr_ $ cell [] l <> cell [] l
 chunkBodyToRows (CDiff (Diff dels adds)) =
-    mapM_ (\(del,add) -> tr_ $ diffCell delAttrs del <> diffCell addAttrs add) (fillIn dels adds)
+    mapM_ (\(del,add) -> tr_ $ cell delAttrs del <> cell addAttrs add) (fillIn dels adds)
   where
-    diffCell attrs l
-      | T.null l  = cell [] (""::String)
-      | otherwise = cell attrs l
     addAttrs = [class_ "addition"]
     delAttrs = [class_ "deletion"]
 

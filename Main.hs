@@ -9,13 +9,10 @@ import Lucid
 import Diff2Html
 import Chunk
 import Diff
-import Style
 
-diffToHtml :: FilePath -> IO (Html ())
-diffToHtml fname = do
+parseChunks :: FilePath -> IO [Chunk]
+parseChunks fname = do
     Right r <- parseOnly (many diff) <$> TIO.readFile fname
-    return $ doctypehtml_ $ do
-      head_ $ style_ [] styleSheet
-      body_ $ table_ [class_ "diff"]$ foldMap chunkToRows $ toChunks r
+    return (toChunks r)
 
 main = return ()

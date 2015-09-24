@@ -16,6 +16,14 @@ styleSheet = render $ do
     ".diff" ** td ? do
       padding nil nil nil nil
 
+    tr # ".header" |> td ? do
+      paddingTop (px 10)
+      backgroundColor "#eee"
+
+    ".filename" ? do
+      fontWeight bold
+      fontSizeCustom large
+
     ".addition" ? do
       backgroundColor "#d0ffd0"
 
