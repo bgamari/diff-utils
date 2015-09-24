@@ -79,8 +79,15 @@ diff :: Parser DiffLine
 diff = header <|> (Position <$> position) <|> body
   where
     header = try $ do
-        void $ optional $ string "diff " *> takeLine
-        void $ optional $ string "index " *> takeLine -- git
+        void $ optional $ do
+            -- ignore git headers
+            void $ string "diff --git" *> takeLine
+            let go = do c <- peekChar'
+                        case c of
+                          '-' -> return ()
+                          _   -> takeLine >> go
+            go
+
         del <- string "---" *> skipSpace *> hdr
         add <- string "+++" *> skipSpace *> hdr
         pos <- position
