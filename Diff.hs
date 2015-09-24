@@ -88,9 +88,13 @@ diff = header <|> (Position <$> position) <|> annotation <|> body
         pos <- position
         return $ Header (Diff del add) pos
       where
-        hdr = do
-            file <- T.pack <$> manyTill anyChar (void (char '\t') <|> endOfLine)
-            timestamp <- option "" $ char '\t' *> takeLine
+        hdr = hdrTimestamp <|> hdrNoTimestamp
+        hdrNoTimestamp = do
+            file <- T.pack <$> manyTill anyChar endOfLine
+            return $ DiffFile file ""
+        hdrTimestamp = do
+            file <- T.pack <$> manyTill anyChar (char '\t')
+            timestamp <- option "" $ takeLine
             return $ DiffFile file timestamp
 
     position = do
