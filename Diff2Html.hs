@@ -11,7 +11,6 @@ import Lucid
 
 import Chunk
 import Diff
-import Style
 import Utils (breakWith)
 
 chunksToTable :: [Chunk] -> Html ()
