@@ -6,6 +6,7 @@ import qualified Data.DList as DList
 import Data.Foldable
 import qualified Data.Text as T
 
+import Utils (breakWith)
 import Diff hiding (line, body)
 
 data ChunkBody = CContext [T.Text]
@@ -49,11 +50,3 @@ toChunks (Header files0 pos0 : rest0) =
         f (Body (Addition line)) = Just $ Diff []     [line]
         f _                      = Nothing
 toChunks _ = error "toChunks: Malformed diff"
-
-breakWith :: (a -> Maybe b) -> [a] -> ([b], [a])
-breakWith f = go mempty
-  where
-    go accum (x:xs)
-      | Just y <- f x = go (accum `DList.snoc` y) xs
-      | otherwise     = (toList accum, x:xs)
-    go accum []       = (toList accum, [])

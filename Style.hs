@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Style where
-import Prelude hiding ((**))
+import Prelude hiding ((**), span)
 import Clay
 import Data.Text.Lazy (Text)
 
@@ -24,8 +24,12 @@ styleSheet = render $ do
       fontWeight bold
       fontSizeCustom large
 
-    ".addition" ? do
-      backgroundColor "#d0ffd0"
+    tr # ".diff" ? do
+      span ? do
+        whiteSpace preWrap
+        fontFamily [] [monospace]
 
-    ".deletion" ? do
-      backgroundColor "#ffd0d0"
+      ".add" ? backgroundColor "#d0ffd0"
+      ".del" ? backgroundColor "#ffd0d0"
+      ".add" |> ".change" ? backgroundColor "#a0ffa0"
+      ".del" |> ".change" ? backgroundColor "#ffa0a0"
