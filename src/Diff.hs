@@ -3,7 +3,7 @@
 
 module Diff where
 
-import Data.Monoid
+import Data.Semigroup hiding (option, diff)
 import qualified Data.Text as T
 import qualified Data.Text.Lazy.Builder as TB
 import qualified Data.Text.Lazy.Builder.Int as TB
@@ -22,7 +22,9 @@ instance Applicative Diff where
 
 instance Monoid a => Monoid (Diff a) where
     mempty = pure mempty
-    Diff a b `mappend` Diff x y = Diff (a <> x) (b <> y)
+
+instance Semigroup a => Semigroup (Diff a) where
+    Diff a b <> Diff x y = Diff (a <> x) (b <> y)
 
 instance Foldable Diff where
     foldMap f (Diff a b) = f a <> f b
